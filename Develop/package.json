@@ -1,0 +1,16 @@
+{
+  "name": "NoSQL serverside app",
+  "description": "demonstration of NoSQL serverside route usage",
+  "author": "Tavonn S.",
+  "version": "1.0.0",
+  "main": "pathToMain",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.9.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "license": "ISC"
+}
