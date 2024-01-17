@@ -1,24 +1,16 @@
-// index.js or app.js
 const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/connection');
+const db = require('./config/connection');
+const routes = require('./routes');
+
+const PORT = process.env.PORT || 3001;
 const app = express();
 
-// Middleware to parse JSON in request body
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(routes);
 
-// Middleware to allow cross-origin requests
-app.use(cors());
-
-// MongoDB connection
-connectDB();
-
-// Include the routes
-const userRoutes = require('./routes/index');
-app.use('/api/users', userRoutes);
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+db.once('open', () => {
+  app.listen(PORT, () => {
+    console.log(`API server for ${activity} running on port ${PORT}!`);
+  });
 });

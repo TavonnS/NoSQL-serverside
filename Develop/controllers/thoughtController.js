@@ -1,4 +1,4 @@
-const Thought = require('../models/Thought');
+const { Thought } = require('../models/thought');
 
 const thoughtController = {
   getAllThoughts: async (req, res) => {
@@ -6,12 +6,12 @@ const thoughtController = {
       const thoughts = await Thought.find();
       res.json(thoughts);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json(error);
     }
   },
 
   getThoughtById: async (req, res) => {
-    const { thoughtId } = req.params;
+    const { thoughtId } = req.params.id;
     try {
       const thought = await Thought.findById(thoughtId);
       if (!thought) {
@@ -19,14 +19,15 @@ const thoughtController = {
       }
       res.json(thought);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json(error);
     }
   },
 
   createThought: async (req, res) => {
-    const { thoughtText, username } = req.body;
+    const { thoughtText, username, userId } = req.body;
     try {
       const thought = await Thought.create({ thoughtText, username });
+      userId.thoughts.push(thought._id);
       res.status(201).json(thought);
     } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -47,7 +48,7 @@ const thoughtController = {
       }
       res.json(thought);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json(error);
     }
   },
 
@@ -60,9 +61,47 @@ const thoughtController = {
       }
       res.json({ message: 'Thought deleted successfully' });
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json(error);
     }
   },
+
+  createReaction: async (req, res) => {
+    const { thoughtId } = req.params;
+    const { reactionBody, username } = req.body;
+    try {
+      const thought = await Thought.findByIdAndUpdate(
+        thoughtId,
+        {
+          $push: { reactions: { reactionBody, username } },
+        },
+        { new: true }
+      );
+      if (!thought) {
+        return res.status(404).json({ error: 'Thought not found' });
+      }
+      res.json(thought);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
+
+  deleteReaction: async (req, res) => { 
+    const { thoughtId, reactionId } = req.params;
+    try {
+      const thought = await Thought.findByIdAndUpdate(
+        thoughtId,
+        { $pull: { reactions: { reactionId } } },
+        { new: true }
+      );
+      if (!thought) {
+        return res.status(404).json({ error: 'Thought not found' });
+      }
+      res.json({ message: 'Reaction deleted successfully' });
+    }
+    catch (error) {
+      res.status(500).json(error);
+    }
+}
 };
 
 module.exports = thoughtController;
