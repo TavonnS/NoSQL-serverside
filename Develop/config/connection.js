@@ -1,6 +1,6 @@
 const { connect, connection } = require('mongoose');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/NoSQL-appDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://127.0.0.1:27017/NoSQL-appDB');
 
 module.exports = connection;
