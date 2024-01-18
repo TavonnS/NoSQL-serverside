@@ -7,13 +7,23 @@ const thoughtSchema = new mongoose.Schema({
     username: { type: String, required: true },
     reactions: [{ 
         
-            reactionId: { type: mongoose.Schema.Types.ObjectId, default: () => new Types.ObjectId() },
+              // reactionId: { type: mongoose.Schema.Types.ObjectId, default: () => new Types.ObjectId() },
               
               reactionBody: String,
               username: String,
               createdAt: { type: Date, default: Date.now, get: (createdAtVal) => dateFormat(createdAtVal)},
             }]
-});
+},
+{
+    toJSON: {
+        virtuals: true
+    },
+    toObject: { 
+        virtuals: true 
+    }
+},
+
+);
 
 // virtual to count reactions
 thoughtSchema.virtual('reactionCount').get(function () {

@@ -1,6 +1,8 @@
-const { default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 const Thought = require('../models/thought');
 const User = require('../models/user');
+
+
 
 const thoughtController = {
   getAllThoughts: async (req, res) => {
@@ -27,33 +29,30 @@ const thoughtController = {
   },
 
   createThought: async (req, res) => {
-    const { thoughtText, userId, username } = req.body;
-  
+    const { thoughtText, username } = req.body;
     try {
-      // Create the thought
-      const thought = await Thought.create({ thoughtText, userId, username });
-  
-      // Find the user by ID and update the thoughts array
-      const user = await User.findByIdAndUpdate(userId, { $push: { thoughts: thought.userId } }, { new: true });
-  
-      console.log(user)
-      if (!user) {
-        // If user is not found, handle accordingly
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      // Send the created thought as a response
-      res.status(201).json(thought);
+        // Create the thought with auto-generated _id
+        const thought = await Thought.create({ thoughtText, username });
+
+        // Find the user by username and update the thoughts array
+        const user = await User.findOneAndUpdate(
+            { username },
+            { $push: { thoughts: thought._id } },
+            { new: true }
+        );
+        if (!user) {
+            // If user is not found, handle accordingly
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Send the created thought as a response
+        res.status(201).json(thought);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  },
+},
 
-
-
-  
-  
 
   updateThought: async (req, res) => {
     const { thoughtId } = req.params;
@@ -75,17 +74,22 @@ const thoughtController = {
 
   deleteThought: async (req, res) => {
     const { thoughtId } = req.params;
+
     try {
-      const thought = await Thought.findOneAndDelete(thoughtId);
-      if (!thought) {
-        return res.status(404).json({ error: 'Thought not found' });
-      }
-      res.json({ message: 'Thought deleted successfully' });
+        const deletedThought = await Thought.findByIdAndDelete(thoughtId);
+
+        if (!deletedThought) {
+            return res.status(404).json({ error: 'Thought not found' });
+        }
+
+        res.json({ message: 'Thought deleted successfully' });
+      
     } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
+        console.error(error);
+        res.status(500).json(error);
     }
-  },
+},
+
 
   createReaction: async (req, res) => {
     const { thoughtId } = req.params;
@@ -110,10 +114,11 @@ const thoughtController = {
 
   deleteReaction: async (req, res) => { 
     const { thoughtId, reactionId } = req.params;
+
     try {
         const thought = await Thought.findByIdAndUpdate(
             thoughtId,
-            { $pull: { reactions: { reactionId: new mongoose.Types.ObjectId(reactionId) } } },
+            { $pull: { reactions: { _id: reactionId } } },
             { new: true }
         );
 
@@ -123,10 +128,11 @@ const thoughtController = {
 
         res.json({ message: 'Reaction deleted successfully' });
     } catch (error) {
-      console.error(error);
+        console.error(error);
         res.status(500).json(error);
     }
 }
+
 
 };
 
