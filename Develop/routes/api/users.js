@@ -14,16 +14,16 @@ const {
 
 router.get('/', getAllUsers);
 
-router.get('/users/:id', getUserById);
+router.get('/:userId', getUserById);
 
-router.post('/users', createUser);
+router.post('/', createUser);
 
-router.put('/users/:id', updateUser);
+router.put('/:userId', updateUser);
 
-router.delete('/users/:id', deleteUser);
+router.delete('/:userId', deleteUser);
 
-router.post('/users/:userId/friends/:friendId', addFriend);
+router.post('/:userId/friends/:friendId', addFriend);
 
-router.delete('/users/:userId/friends/:friendId', deleteFriend);
+router.delete('/:userId/friends/:friendId', deleteFriend);
 
 module.exports = router;

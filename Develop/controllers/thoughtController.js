@@ -1,4 +1,5 @@
-const { Thought } = require('../models/thought');
+const Thought = require('../models/thought');
+const User = require('../models/user');
 
 const thoughtController = {
   getAllThoughts: async (req, res) => {
@@ -6,12 +7,13 @@ const thoughtController = {
       const thoughts = await Thought.find();
       res.json(thoughts);
     } catch (error) {
+      console.error(error);
       res.status(500).json(error);
     }
   },
 
   getThoughtById: async (req, res) => {
-    const { thoughtId } = req.params.id;
+    const { thoughtId } = req.params;
     try {
       const thought = await Thought.findById(thoughtId);
       if (!thought) {
@@ -24,15 +26,39 @@ const thoughtController = {
   },
 
   createThought: async (req, res) => {
-    const { thoughtText, username, userId } = req.body;
+    const { thoughtText, username, _Id } = req.body;
+
     try {
-      const thought = await Thought.create({ thoughtText, username });
-      userId.thoughts.push(thought._id);
-      res.status(201).json(thought);
+        // Create the thought
+        const thought = await Thought.create({ thoughtText, username });
+
+        // Find the user by ID and update the thoughts array
+        console.log('Received userId:', _Id);
+        const user = await User.findByIdAndUpdate(
+            _Id,
+            { $push: { thoughts: thought._id } },
+            { new: true }
+        );
+
+        console.log('User:', user); // Log the user to see if it's found
+
+        if (!user) {
+            // If user is not found, handle accordingly
+            console.log('User not found');
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Send the created thought as a response
+        res.status(201).json(thought);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  },
+},
+
+
+  
+  
 
   updateThought: async (req, res) => {
     const { thoughtId } = req.params;

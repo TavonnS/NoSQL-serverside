@@ -16,13 +16,13 @@ const {
 
 router.get('/', getAllThoughts);
 
-router.get('/:id', getThoughtById);
+router.get('/:thoughtId', getThoughtById);
 
 router.post('/', createThought);    
 
-router.put('/:id', updateThought);
+router.put('/:thoughtId', updateThought);
 
-router.delete('/:id', deleteThought);
+router.delete('/:thoughtId', deleteThought);
 
 router.post('/:thoughtId/reactions', createReaction);
 
