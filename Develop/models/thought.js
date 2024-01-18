@@ -5,7 +5,14 @@ const thoughtSchema = new mongoose.Schema({
     thoughtText: { type: String, required: true, minlength: 1, maxlength: 280 },
     createdAt: { type: Date, default: Date.now },
     username: { type: String, required: true },
-    reactions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reaction' }]
+    reactions: [{ 
+        
+            reactionId: { type: mongoose.Schema.Types.ObjectId, default: () => new Types.ObjectId() },
+              
+              reactionBody: String,
+              username: String,
+              createdAt: { type: Date, default: Date.now, get: (createdAtVal) => dateFormat(createdAtVal)},
+            }]
 });
 
 // virtual to count reactions
