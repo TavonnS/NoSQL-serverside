@@ -1,4 +1,4 @@
-# NoSQL-Server App
+# NoSQL-Server
 
 ## Description
 
@@ -6,4 +6,4 @@ This is an example of routing using a Mongo database.  This simulates a social m
 
 ## Video Link
 
-[Demo Video](www.google.com)
+[Video](https://drive.google.com/file/d/1p_xUzRoAChnOJuvCB1SVvuXsYTrsl9bW/view)
